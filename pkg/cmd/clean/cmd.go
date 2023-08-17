@@ -48,5 +48,7 @@ func NewCmd(clusteradmFlags *genericclioptionsclusteradm.ClusteradmFlags, stream
 	cmd.Flags().StringVar(&o.ClusterManageName, "name", "cluster-manager", "The name of the cluster manager resource")
 	cmd.Flags().StringVar(&o.OutputFile, "output-file", "", "The generated resources will be copied in the specified file")
 	cmd.Flags().BoolVar(&o.purgeOperator, "purge-operator", true, "Purge the operator")
+	cmd.Flags().StringVar(&o.bootstrapClusterRolePrefix, "bootstrap-cluster-role-prefix", "system:", "Prefix of open-cluster-management:bootstrap role")
+
 	return cmd
 }

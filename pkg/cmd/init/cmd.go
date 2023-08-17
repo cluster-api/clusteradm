@@ -57,5 +57,7 @@ func NewCmd(clusteradmFlags *genericclioptionsclusteradm.ClusteradmFlags, stream
 	cmd.Flags().BoolVar(&o.wait, "wait", false,
 		"If set, the command will initialize the OCM control plan in foreground.")
 	cmd.Flags().StringVarP(&o.output, "output", "o", "text", "output foramt, should be json or text")
+	cmd.Flags().StringVar(&o.bootstrapClusterRolePrefix, "bootstrap-cluster-role-prefix", "system:", "Prefix of open-cluster-management:bootstrap role")
+
 	return cmd
 }

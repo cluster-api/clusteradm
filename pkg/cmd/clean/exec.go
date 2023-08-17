@@ -18,6 +18,7 @@ import (
 	"k8s.io/client-go/util/retry"
 	"k8s.io/klog/v2"
 	clustermanagerclient "open-cluster-management.io/api/client/operator/clientset/versioned"
+	"open-cluster-management.io/clusteradm/pkg/config"
 	"open-cluster-management.io/clusteradm/pkg/helpers"
 )
 
@@ -127,7 +128,7 @@ func (o *Options) removeBootStrapSecret(client kubernetes.Interface) error {
 	var errs []error
 	err := client.RbacV1().
 		ClusterRoles().
-		Delete(context.Background(), "system:open-cluster-management:bootstrap", metav1.DeleteOptions{})
+		Delete(context.Background(), o.bootstrapClusterRolePrefix+config.BootstrapClusterRoleName, metav1.DeleteOptions{})
 	if err != nil && !errors.IsNotFound(err) {
 		errs = append(errs, err)
 	}

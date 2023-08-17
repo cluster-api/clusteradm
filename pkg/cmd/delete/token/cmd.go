@@ -42,6 +42,7 @@ func NewCmd(clusteradmFlags *genericclioptionsclusteradm.ClusteradmFlags, stream
 			return nil
 		},
 	}
+	cmd.Flags().StringVar(&o.bootstrapClusterRolePrefix, "bootstrap-cluster-role-prefix", "system:", "Prefix of open-cluster-management:bootstrap role")
 
 	return cmd
 }

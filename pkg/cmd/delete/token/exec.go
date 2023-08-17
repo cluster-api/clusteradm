@@ -64,7 +64,7 @@ func (o *Options) deleteToken(kubeClient *kubernetes.Clientset) error {
 	}
 
 	//Delete Roles
-	err = kubeClient.RbacV1().ClusterRoles().Delete(context.TODO(), config.BootstrapClusterRoleName, metav1.DeleteOptions{})
+	err = kubeClient.RbacV1().ClusterRoles().Delete(context.TODO(), o.bootstrapClusterRolePrefix+config.BootstrapClusterRoleName, metav1.DeleteOptions{})
 	if err != nil && !errors.IsNotFound(err) {
 		return err
 	}

@@ -7,7 +7,7 @@ const (
 	BootstrapSAName                   = "cluster-bootstrap"
 	BootstrapClusterRoleBindingName   = "cluster-bootstrap"
 	BootstrapClusterRoleBindingSAName = "cluster-bootstrap-sa"
-	BootstrapClusterRoleName          = "system:open-cluster-management:bootstrap"
+	BootstrapClusterRoleName          = "open-cluster-management:bootstrap"
 	ClusterManagerName                = "cluster-manager"
 	LabelApp                          = "app"
 	BootstrapSecretPrefix             = "bootstrap-token-"

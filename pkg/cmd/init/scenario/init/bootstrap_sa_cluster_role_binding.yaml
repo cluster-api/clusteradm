@@ -6,7 +6,7 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: system:open-cluster-management:bootstrap
+  name: {{ .BootstrapClusterRolePrefix }}open-cluster-management:bootstrap
 subjects:
 - kind: ServiceAccount
   name: cluster-bootstrap

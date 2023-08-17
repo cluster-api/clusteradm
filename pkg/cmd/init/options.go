@@ -29,6 +29,8 @@ type Options struct {
 	wait bool
 	//
 	output string
+	//
+	bootstrapClusterRolePrefix string
 
 	builder *resource.Builder
 
@@ -66,6 +68,9 @@ type Values struct {
 
 	// Features is the slice of feature for addon manager
 	AddonFeatures []operatorv1.FeatureGate
+
+	//
+	BootstrapClusterRolePrefix string
 }
 
 // Hub: The hub values for the template

@@ -18,6 +18,8 @@ type Options struct {
 	OutputFile string
 	//Delete the operator by default
 	purgeOperator bool
+	//
+	bootstrapClusterRolePrefix string
 
 	Streams genericclioptions.IOStreams
 }

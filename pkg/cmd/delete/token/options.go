@@ -8,6 +8,9 @@ import (
 
 // Options is holding all the command-line options
 type Options struct {
+	//
+	bootstrapClusterRolePrefix string
+
 	//ClusteradmFlags: The generic options from the clusteradm cli-runtime.
 	ClusteradmFlags *genericclioptionsclusteradm.ClusteradmFlags
 }
