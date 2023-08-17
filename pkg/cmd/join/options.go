@@ -27,6 +27,8 @@ type Options struct {
 	mode string
 	// managed cluster kubeconfig file, used in hosted mode
 	managedKubeconfigFile string
+	//
+	authenticationConfigMapNamespace string
 
 	//Pulling image registry of OCM
 	registry string
@@ -70,6 +72,8 @@ type Values struct {
 	BundleVersion BundleVersion
 	// managed kubeconfig
 	ManagedKubeconfig string
+	//
+	AuthenticationConfigMapNamespace string
 
 	// Features is the slice of feature for registration
 	RegistrationFeatures []operatorv1.FeatureGate

@@ -46,6 +46,9 @@ spec:
         args:
           - "/registration-operator"
           - "klusterlet"
+        {{- if not (eq .AuthenticationConfigMapNamespace "kube-system") }}
+          - --authentication-configmap-namespace={{ .AuthenticationConfigMapNamespace }}
+        {{- end }}
         livenessProbe:
           httpGet:
             path: /healthz

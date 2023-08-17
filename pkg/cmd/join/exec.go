@@ -98,9 +98,10 @@ func (o *Options) complete(cmd *cobra.Command, args []string) (err error) {
 			AgentNamespace:      agentNamespace,
 			KlusterletNamespace: klusterletNamespace,
 		},
-		ManagedKubeconfig:    o.managedKubeconfigFile,
-		RegistrationFeatures: genericclioptionsclusteradm.ConvertToFeatureGateAPI(genericclioptionsclusteradm.SpokeMutableFeatureGate, ocmfeature.DefaultSpokeRegistrationFeatureGates),
-		WorkFeatures:         genericclioptionsclusteradm.ConvertToFeatureGateAPI(genericclioptionsclusteradm.SpokeMutableFeatureGate, ocmfeature.DefaultSpokeWorkFeatureGates),
+		AuthenticationConfigMapNamespace: o.authenticationConfigMapNamespace,
+		ManagedKubeconfig:                o.managedKubeconfigFile,
+		RegistrationFeatures:             genericclioptionsclusteradm.ConvertToFeatureGateAPI(genericclioptionsclusteradm.SpokeMutableFeatureGate, ocmfeature.DefaultSpokeRegistrationFeatureGates),
+		WorkFeatures:                     genericclioptionsclusteradm.ConvertToFeatureGateAPI(genericclioptionsclusteradm.SpokeMutableFeatureGate, ocmfeature.DefaultSpokeWorkFeatureGates),
 	}
 
 	versionBundle, err := version.GetVersionBundle(o.bundleVersion)
@@ -249,6 +250,32 @@ func (o *Options) run() error {
 	err = r.Apply(scenario.Files, o.values, files...)
 	if err != nil {
 		return err
+	}
+
+	if o.authenticationConfigMapNamespace != metav1.NamespaceSystem {
+		kc, err := o.ClusteradmFlags.KubectlFactory.KubernetesClientSet()
+		if err != nil {
+			return err
+		}
+
+		// k get cm -n kube-system extension-apiserver-authentication -o yaml
+		cm, err := kc.CoreV1().ConfigMaps(metav1.NamespaceSystem).Get(context.TODO(), "extension-apiserver-authentication", metav1.GetOptions{})
+		if err != nil {
+			return err
+		}
+
+		// copy to o.authenticationConfigMapNamespace
+		m := metav1.ObjectMeta{
+			Name:      "extension-apiserver-authentication",
+			Namespace: o.authenticationConfigMapNamespace,
+		}
+		_, err = CreateOrPatchConfigMap(context.TODO(), kc, m, func(obj *corev1.ConfigMap) *corev1.ConfigMap {
+			obj.Data = cm.Data
+			return obj
+		}, metav1.PatchOptions{})
+		if err != nil {
+			return err
+		}
 	}
 
 	if !available {
