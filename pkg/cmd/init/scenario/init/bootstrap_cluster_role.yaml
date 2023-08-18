@@ -28,10 +28,9 @@ rules:
   - create
   - list
   - update
-- apiGroups: 
+- apiGroups:
   - "cluster.open-cluster-management.io"
-  resources: 
+  resources:
   - "managedclustersets/join"
-  verbs: 
+  verbs:
   - "create"
-  
