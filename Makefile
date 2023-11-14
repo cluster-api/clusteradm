@@ -30,11 +30,11 @@ deps:
 	@$(INSTALL_DEPENDENCIES)
 
 .PHONY: build
-build: 
-	rm -f ${GOPATH}/bin/clusteradm
-	go install ./cmd/clusteradm/clusteradm.go
+build:
+	rm -f bin/clusteradm
+	CGO_ENABLED=0 go build -ldflags="-s -w" -o bin/clusteradm cmd/clusteradm/clusteradm.go
 
-.PHONY: 
+.PHONY:
 build-bin:
 	@rm -rf bin
 	@mkdir -p bin
@@ -47,7 +47,7 @@ build-bin:
 	GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -gcflags=-trimpath=x/y -o bin/clusteradm.exe ./cmd/clusteradm/clusteradm.go && zip -q bin/clusteradm_windows_amd64.zip LICENSE -j bin/clusteradm.exe
 
 .PHONY: release
-release: 
+release:
 	@if [[ -z "${VERSION}" ]]; then VERSION=`cat VERSION.txt`; echo $$VERSION; fi; \
 	git tag $$VERSION && git push upstream --tags
 
@@ -55,7 +55,7 @@ release:
 build-krew: krew-tools
 	@if [[ -z "${VERSION}" ]]; then VERSION=`cat VERSION.txt`; echo $$VERSION; fi; \
 	docker run -v ${PROJECT_DIR}/.krew.yaml:/tmp/template-file.yaml rajatjindal/krew-release-bot:v0.0.40 \
-	krew-release-bot template --tag v$$VERSION --template-file /tmp/template-file.yaml > krew-manifest.yaml; 
+	krew-release-bot template --tag v$$VERSION --template-file /tmp/template-file.yaml > krew-manifest.yaml;
 	KREW=/tmp/krew-${GOOS}\_$(GOARCH) && \
 	KREW_ROOT=`mktemp -d` KREW_OS=darwin KREW_ARCH=amd64 $$KREW install --manifest=krew-manifest.yaml && \
 	KREW_ROOT=`mktemp -d` KREW_OS=linux KREW_ARCH=amd64 $$KREW install --manifest=krew-manifest.yaml && \
@@ -70,7 +70,7 @@ ifeq (, $(shell which /tmp/krew-$(GOOS)\_$(GOARCH)))
 		KREW=krew-$(GOOS)\_$(GOARCH); \
 		curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/$$KREW.tar.gz" && \
 		tar zxvf $$KREW.tar.gz \
-	) 
+	)
 endif
 
 .PHONY: install
@@ -94,7 +94,7 @@ test: deps
 	@build/run-unit-tests.sh
 
 .PHONY: clean-test
-clean-test: 
+clean-test:
 	-rm -r ./test/unit/coverage
 	-rm -r ./test/unit/tmp
 	-rm -r ./test/out
@@ -112,3 +112,15 @@ vendor:
 .PHONY: copy-crd
 copy-crd: vendor
 	bash -x build/copy-crds.sh
+
+IMAGE_REGISTRY?=ghcr.io/kluster-manager
+IMAGE_TAG?=latest
+export IMAGE_NAME?=$(IMAGE_REGISTRY)/clusteradm:$(IMAGE_TAG)
+
+image:
+	docker build -f Dockerfile -t $(IMAGE_NAME) .
+.PHONY: image
+
+push:
+	docker push $(IMAGE_NAME)
+.PHONY: push
